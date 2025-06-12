@@ -1,0 +1,51 @@
+# Node.js (frontend)
+node_modules/
+dist/
+build/
+.env
+.env.*
+
+# Python (backend)
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.log
+venv/
+env/
+.venv/
+ENV/
+logs/
+*.sqlite3
+*.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+
+# Testing
+coverage/
+
+# Cache files
+.cache/
+.eslintcache
+.stylelintcache
+.yarn-integrity
+
+# Large AI model files (do not commit)
+backend/uploads/
+backend/model_cache/
+*.pt
+*.bin
+*.ckpt
+*.h5
+*.onnx
+
+# GitHub metadata
+.github/
