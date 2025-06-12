@@ -28,8 +28,8 @@ SkyGuard is a modern web application that provides real-time drone surveillance 
 
 ## Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- Python
+- Uvicorn
 - Modern web browser
 
 ## Installation
