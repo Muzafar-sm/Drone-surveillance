@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+python-requires = ">=3.11,<3.12"
+
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Backend service"
+requires-python = ">=3.11,<3.12" 
