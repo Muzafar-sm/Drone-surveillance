@@ -21,9 +21,6 @@ import {
   SkipBack,
   Maximize2,
   Minimize2,
-  Settings,
-  Eye,
-  EyeOff,
   Upload,
   Video,
   X,
@@ -55,7 +52,6 @@ interface Detection {
 
 const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
   videoFeed = "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80",
-  
   isLive = true,
   currentModel = "facebook/detr-resnet-50",
   confidenceThreshold = 0.85,
@@ -76,6 +72,7 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
   const [detections, setDetections] = useState<Detection[]>([]);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [videoFps, setVideoFps] = useState(30); // Default FPS
+  const [hasProcessedVideo, setHasProcessedVideo] = useState(false);
 
   // Update video dimensions when video metadata is loaded
   useEffect(() => {
@@ -161,7 +158,9 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
       const videoUrl = URL.createObjectURL(file);
       setUploadedVideo(videoUrl);
       setVideoType("uploaded");
+      setHasProcessedVideo(false);
       setIsPlaying(false);
+      setDetections([]); // Clear detections on new video upload
 
       // Upload video to backend for processing
       try {
@@ -175,7 +174,6 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
 
         if (response.ok) {
           const result = await response.json();
-          
           console.log("Upload result:", result);
 
           const videoId = result.video_id;
@@ -234,6 +232,7 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
           
           console.log("Formatted detections:", formattedDetections);
           setDetections(formattedDetections);
+          setHasProcessedVideo(true);
         } else {
           console.error("No detections found in response:", result);
           // Show error to user
@@ -260,6 +259,7 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
     setVideoType("live");
     setUploadedVideo(null);
     setIsPlaying(true);
+    // Do not reset detections here to persist them
   };
 
   // Update FPS from backend metadata if available
@@ -312,7 +312,6 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
     return filteredDetections;
   };
   const frameDetections = getClosestDetections();
-  //console.log("Current frame:", currentFrame, "Closest frame:", frameDetections[0]?.frame_number, "Frame detections:", frameDetections);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -331,10 +330,10 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
     <Card className="w-full h-full bg-background">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle>AI Inference Panel </CardTitle>
+          <CardTitle>AI Inference Panel</CardTitle>
           <Badge variant="secondary" className="ml-2">
-                        Model may take some time wait till it loads
-                      </Badge>
+            Model may take some time wait till it loads
+          </Badge>
           <div className="flex items-center space-x-2">
             <Badge variant="outline" className="bg-blue-100 text-blue-800">
               {videoType === "live" ? "LIVE" : "UPLOADED"}
@@ -377,9 +376,9 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
             {/* Video Feed */}
             {videoType === "uploaded" && uploadedVideo ? (
               <div className="relative w-full h-full">
-              <video
-                ref={videoRef}
-                src={uploadedVideo}
+                <video
+                  ref={videoRef}
+                  src={uploadedVideo}
                   className="w-full h-full object-contain"
                   controls={true}
                   autoPlay={true}
@@ -424,26 +423,26 @@ const AIInferencePanel: React.FC<AIInferencePanelProps> = ({
                   const scaled = scaleBox(detection.boundingBox);
                   console.log("Scaled box:", scaled);
                   return (
-                  <div
-                    key={detection.id}
-                    className={`absolute border-2 border-red-500 ${showConfidenceScores ? "border-opacity-80" : "border-opacity-100"}`}
-                    style={{
+                    <div
+                      key={detection.id}
+                      className={`absolute border-2 border-red-500 ${showConfidenceScores ? "border-opacity-80" : "border-opacity-100"}`}
+                      style={{
                         left: `${scaled.left}px`,
                         top: `${scaled.top}px`,
                         width: `${scaled.width}px`,
                         height: `${scaled.height}px`,
-                    }}
-                  >
-                    {showConfidenceScores && (
-                      <div className="absolute top-0 left-0 transform -translate-y-full bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded">
-                        {detection.label}:{" "}
-                        {Math.round(detection.confidence * 100)}%
-                        <span
-                          className={`ml-1 inline-block w-2 h-2 rounded-full ${getSeverityColor(detection.severity)}`}
-                        ></span>
-                      </div>
-                    )}
-                  </div>
+                      }}
+                    >
+                      {showConfidenceScores && (
+                        <div className="absolute top-0 left-0 transform -translate-y-full bg-black bg-opacity-70 text-white text-xs px-1 py-0.5 rounded">
+                          {detection.label}:{" "}
+                          {Math.round(detection.confidence * 100)}%
+                          <span
+                            className={`ml-1 inline-block w-2 h-2 rounded-full ${getSeverityColor(detection.severity)}`}
+                          ></span>
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>

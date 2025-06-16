@@ -371,7 +371,7 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Main Content Area */}
             <div className="md:col-span-3">
-              <TabsContent value="live" className="space-y-4">
+              <div className="space-y-4" style={{ display: activeTab === "live" ? "block" : "none" }}>
                 <Card>
                   <CardHeader>
                     <CardTitle>AI Inference Panel</CardTitle>
@@ -380,9 +380,9 @@ const Home = () => {
                     <AIInferencePanel />
                   </CardContent>
                 </Card>
-              </TabsContent>
+              </div>
 
-              <TabsContent value="map" className="space-y-4">
+              <div className="space-y-4" style={{ display: activeTab === "map" ? "block" : "none" }}>
                 <Card>
                   <CardHeader>
                     <CardTitle>3D Map Visualization</CardTitle>
@@ -391,9 +391,9 @@ const Home = () => {
                     <MapVisualization />
                   </CardContent>
                 </Card>
-              </TabsContent>
+              </div>
 
-              <TabsContent value="analytics" className="space-y-4">
+              <div className="space-y-4" style={{ display: activeTab === "analytics" ? "block" : "none" }}>
                 <Card>
                   <CardHeader>
                     <CardTitle>System Analytics</CardTitle>
@@ -402,7 +402,7 @@ const Home = () => {
                     <AnalyticsDashboard />
                   </CardContent>
                 </Card>
-              </TabsContent>
+              </div>
             </div>
 
             {/* Sidebar */}
